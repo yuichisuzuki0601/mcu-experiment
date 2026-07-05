@@ -4,9 +4,9 @@ from machine import Pin, I2S
 from util.audio_file import WavFile
 
 class Max98753a():
-    VOLUME_LEVEL      = 1    # 1(小) 〜 10(大)
-    READ_BUFFER_SIZE  = 1024 # ファイルから一度に読むバイト数
-    I2S_BUFFER_SIZE   = 4096 # I2S 内部リングバッファ（兼、終了時の無音書き込みサイズ）
+    MAX_VOLUME       = 100
+    READ_BUFFER_SIZE = 1024 # ファイルから一度に読むバイト数
+    I2S_BUFFER_SIZE  = 4096 # I2S 内部リングバッファサイズ 兼 終了時の無音書き込みサイズ
 
     def __init__(self, lrc_gpio_number: int, bclk_gpio_number: int, din_gpio_number: int):
         self.lrc_gpio_number  = lrc_gpio_number
@@ -16,7 +16,8 @@ class Max98753a():
         self._ws_pin          = Pin(lrc_gpio_number)
         self._sd_pin          = Pin(din_gpio_number)
 
-    def sound(self, wav_file: WavFile):
+    def play(self, wav_file: WavFile, volume: int = MAX_VOLUME // 2):
+        volume = max(0, min(Max98753a.MAX_VOLUME, volume))
         audio = I2S(
             0,
             sck    = self._sck_pin,
@@ -37,6 +38,9 @@ class Max98753a():
                 if read_size == 0:
                     break
                 remaining_size -= read_size
-                read_size -= read_size % 2
-                audio.write(array('h', buffer[:read_size]))
-        audio.write(bytearray(Max98753a.I2S_BUFFER_SIZE))
+                read_size -= read_size % 2 # ほぼ発生しないはずだがファイル末尾で奇数のデータがあった場合に無視する
+                samples = array('h', buffer[:read_size])
+                for i in range(len(samples)):
+                    samples[i] = samples[i] * volume // Max98753a.MAX_VOLUME # 音量調節
+                audio.write(samples)
+        audio.write(bytearray(Max98753a.I2S_BUFFER_SIZE)) # 無音を書き込んでクリップ音防止

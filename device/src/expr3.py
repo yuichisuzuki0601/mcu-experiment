@@ -10,30 +10,32 @@ from util.audio_file import WavFile
 
 tact_switch_gpio_number = 20
 led_gpio_number         = 1
-audio_amp_gpio_numbers = (3, 2, 4)
+audio_amp_gpio_numbers  = (3, 2, 4)
 
 pico_board_led = PicoBoardLed().on()
 tact_switch    = TactSwitch(tact_switch_gpio_number)
 led            = Led(led_gpio_number)
 audio_amp      = Max98753a(*audio_amp_gpio_numbers)
 
-wav_file_path = "sound-mono-data.wav"
-#wav_file_path = "sound-stereo-data.wav"
-#wav_file_path = "sound-neko.wav"
+wav_file_coin = WavFile('mario-coin.wav').print_detail()
+wav_file_pipe = WavFile('mario-pipe.wav').print_detail()
 
-wav_file = WavFile(wav_file_path).print_detail()
+bool = False
 
 def handle_click():
+    global bool
     led.flash()
-    audio_amp.sound(wav_file)
+    if not bool:
+        audio_amp.play(wav_file_coin, 5)
+    else:
+        audio_amp.play(wav_file_pipe, 5)
+    bool = not bool
 
 tact_switch.on_click(handle_click)
 
 # =====
 
 print("mcu-sample start")
-# 起動時に1回デモ再生
-audio_amp.sound(wav_file)
 
 try:
     asyncio.get_event_loop().run_forever()
