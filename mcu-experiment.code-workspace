@@ -1,0 +1,27 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": ".",
+    },
+    {
+      "path": "backend",
+    },
+    {
+      "path": "device",
+    },
+  ],
+  "settings": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+    },
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+    "java.compile.nullAnalysis.mode": "automatic",
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "python.analysis.diagnosticSeverityOverrides": {
+      "reportMissingImports": "none",
+      "reportMissingModuleSource": "none",
+    },
+  },
+}

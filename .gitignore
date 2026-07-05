@@ -1,0 +1,7 @@
+# device
+device/.storage
+device/src/lib
+device/src/font
+
+# other
+.DS_store
