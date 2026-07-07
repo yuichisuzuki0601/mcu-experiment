@@ -20,12 +20,11 @@
     "java.compile.nullAnalysis.mode": "automatic",
     "java.configuration.updateBuildConfiguration": "automatic",
     "python.analysis.extraPaths": [
-      "${workspaceFolder:root}/device/src",
-      "${workspaceFolder:root}/device/.stub/micropython/esp32",
+      "${workspaceFolder:device}/.stub/micropython/esp32",
+      "${workspaceFolder:device}/src",
     ],
     "python.analysis.diagnosticSeverityOverrides": {
       "reportMissingModuleSource": "none",
     },
-    "python.analysis.stubPath": "${workspaceFolder:root}/device/.stubs/micropython/esp32",
   },
 }
