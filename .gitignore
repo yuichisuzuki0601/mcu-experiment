@@ -1,7 +1,9 @@
 # device
+device/.stub
 device/.storage
 device/src/lib
 device/src/font
 
 # other
 .DS_store
+.active-context.json

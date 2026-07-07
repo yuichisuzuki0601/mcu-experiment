@@ -33,7 +33,14 @@ backend-start:
     cd {{ BACKEND_DIR }}
     ./mvnw spring-boot:run
 
-# deviceに必要なライブラリをインストールします
+# device開発用に必要なstubをインストールします
+[group('device')]
+device-install-stub:
+    #!/bin/sh
+    rm -rf {{ DEVICE_DIR }}/.stub/micropython/esp32
+    python3 -m pip install --target {{ DEVICE_DIR }}/.stub/micropython/esp32 micropython-stdlib-stubs micropython-esp32-stubs
+
+# device開発に必要なライブラリをインストールします
 [group('device')]
 device-install-lib:
     #!/bin/sh

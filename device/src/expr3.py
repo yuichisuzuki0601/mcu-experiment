@@ -6,7 +6,7 @@ from component.tact_switch import TactSwitch
 from component.pico.board_led import PicoBoardLed
 from component.led import Led
 from component.audio_amp import Max98753a
-from util.audio_file import WavFile
+from util.audio_file import WaveFile
 
 tact_switch_gpio_number = 20
 led_gpio_number         = 1
@@ -17,8 +17,8 @@ tact_switch    = TactSwitch(tact_switch_gpio_number)
 led            = Led(led_gpio_number)
 audio_amp      = Max98753a(*audio_amp_gpio_numbers)
 
-wav_file_coin = WavFile('mario-coin.wav').print_detail()
-wav_file_pipe = WavFile('mario-pipe.wav').print_detail()
+wav_file_coin = WaveFile('mario-coin.wav').print_detail()
+wav_file_pipe = WaveFile('mario-pipe.wav').print_detail()
 
 bool = False
 

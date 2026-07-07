@@ -1,7 +1,7 @@
 from array import array
 from machine import Pin, I2S
 
-from util.audio_file import WavFile
+from util.audio_file import WaveFile
 
 class Max98753a():
     MAX_VOLUME       = 100
@@ -16,7 +16,7 @@ class Max98753a():
         self._ws_pin          = Pin(lrc_gpio_number)
         self._sd_pin          = Pin(din_gpio_number)
 
-    def play(self, wav_file: WavFile, volume: int = MAX_VOLUME // 2):
+    def play(self, wav_file: WaveFile, volume: int = MAX_VOLUME // 2):
         volume = max(0, min(Max98753a.MAX_VOLUME, volume))
         audio = I2S(
             0,
