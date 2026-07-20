@@ -52,7 +52,7 @@ def start(
     def handle_toggle_switch_change(is_on):
         nonlocal dot
         dot = is_on
-        seven_segment.show(number2, dot)
+        seven_segment.display(number2, dot)
 
         async def task():
             operator = 'たしざん' if not dot else 'かけざん'
@@ -70,7 +70,7 @@ def start(
     def handle_rotary_encoder_rotate(clockwise: bool):
         nonlocal number2
         number2 = (number2 - 1 if not clockwise else number2 + 1) % 16
-        seven_segment.show(number2, dot)
+        seven_segment.display(number2, dot)
 
     # HANDLER ASSIGNS
     tact_switch.on_push(handle_tact_switch_push)
@@ -82,4 +82,4 @@ def start(
     pico_board_led.on()
     expose_to_leds()
     oled.write_middle(message, scale).emit()
-    seven_segment.show(number2, dot)
+    seven_segment.display(number2, dot)

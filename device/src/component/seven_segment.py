@@ -20,26 +20,26 @@ class SevenSegment74hc595():
         15: 0b01110001,
     }
 
-    def __init__(self, sck_gpio_number: int, sdi_gpio_number: int, latch_gpio_number: int):
-        self.sck_gpio_number   = sck_gpio_number
-        self.sdi_gpio_number   = sdi_gpio_number
-        self.latch_gpio_number = latch_gpio_number
-        self._sck_pin          = Pin(sck_gpio_number, Pin.OUT)
-        self._sdi_pin          = Pin(sdi_gpio_number, Pin.OUT)
-        self._latch_pin        = Pin(latch_gpio_number, Pin.OUT)
+    def __init__(self, sck_gpio_number: int, sdi_gpio_number: int, lat_gpio_number: int):
+        self.sck_gpio_number = sck_gpio_number
+        self.sdi_gpio_number = sdi_gpio_number
+        self.lat_gpio_number = lat_gpio_number
+        self.sck_pin = Pin(sck_gpio_number, Pin.OUT)
+        self.sdi_pin = Pin(sdi_gpio_number, Pin.OUT)
+        self.lat_pin = Pin(lat_gpio_number, Pin.OUT)
 
     def _write_byte(self, value: int):
-        self._latch_pin.value(0)
+        self.lat_pin.value(0)
         for bit in range(7, -1, -1):
-            self._sck_pin.value(0)
-            self._sdi_pin.value((value >> bit) & 1)
-            self._sck_pin.value(1)
-        self._sck_pin.value(0)
-        self._latch_pin.value(1)
-        self._latch_pin.value(0)
-        print(f'SevenSegment74hc595 \'{(self.sck_gpio_number, self.sdi_gpio_number, self.latch_gpio_number)}\' wrote.')
+            self.sck_pin.value(0)
+            self.sdi_pin.value((value >> bit) & 1)
+            self.sck_pin.value(1)
+        self.sck_pin.value(0)
+        self.lat_pin.value(1)
+        self.lat_pin.value(0)
+        print(f'SevenSegment74hc595 \'{(self.sck_gpio_number, self.sdi_gpio_number, self.lat_gpio_number)}\' wrote.')
 
-    def show(self, number: int, dot: bool = False):
+    def display(self, number: int, dot: bool = False):
         value = SevenSegment74hc595.DIGITS[number]
         if dot:
             value |= 0b10000000

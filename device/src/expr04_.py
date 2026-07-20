@@ -38,11 +38,11 @@ def handle_click():
 tact_switch.on_push(handle_click)
 
 def handle_read(v):
-    seven_segment.show(v, True)
+    seven_segment.display(v, True)
 
 potention_meter.on_change(handle_read)
 
-seven_segment.show(number)
+seven_segment.display(number)
 
 # =====
 
