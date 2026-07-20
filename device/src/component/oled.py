@@ -17,10 +17,12 @@ class Oled:
     def __init__(self, scl_gpio_number: int, sda_gpio_number: int):
         self.scl_gpio_number = scl_gpio_number
         self.sda_gpio_number = sda_gpio_number
-        self._oled           = SSD1306_I2C(Oled.WIDTH, Oled.HEIGHT, I2C(0, scl = Pin(scl_gpio_number), sda = Pin(sda_gpio_number)))
-        self._font           = MisakiFont()
-        self._cursor_y       = 0
-        self.marquee_x       = Oled.WIDTH
+        self.scl_pin = Pin(scl_gpio_number)
+        self.sda_pin = Pin(sda_gpio_number)
+        self._oled = SSD1306_I2C(Oled.WIDTH, Oled.HEIGHT, I2C(0, scl = self.scl_pin, sda = self.sda_pin))
+        self._font = MisakiFont()
+        self._cursor_y = 0
+        self.marquee_x = Oled.WIDTH
         self.clear()
 
     def write(self, text: str, x: int = 0, y: int = None, scale: int = 1):
@@ -87,7 +89,8 @@ class Oled:
 
     def marquee(self, text: str, scale = 1, on_marquee_end = _noop):
         async def coro():
-            speed = scale * 3
+            # TODO speedは引数で調節できてもいいかも
+            speed = scale * 4
             self.clear().write(text, self.marquee_x, Oled.HEIGHT // 2 - Oled.FONT_HEIGHT * scale // 2, scale).emit()
             self.marquee_x -= speed
             if (self.marquee_x < -len(text) * Oled.FONT_WIDTH * scale):

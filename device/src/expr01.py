@@ -2,20 +2,29 @@
 
 import asyncio
 
+from component.tact_switch import TactSwitch
+from component.toggle_switch import ToggleSwitch
+from component.potention_meter import PotentionMeter
+from component.rotary_encoder import RotaryEncoder
+from component.pico.board_led import PicoBoardLed
+from component.led import Led
+from component.oled import Oled
+from component.seven_segment import SevenSegment74hc595
+
 from util.runner import Runner
 
 def start(
-    tact_switch,
-    toggle_switch,
-    potention_meter,
-    rotary_encoder,
-    pico_board_led,
-    led_red,
-    led_yellow,
-    led_blue,
-    led_green,
-    oled,
-    seven_segment,
+    tact_switch: TactSwitch,
+    toggle_switch: ToggleSwitch,
+    potention_meter: PotentionMeter,
+    rotary_encoder: RotaryEncoder,
+    pico_board_led: PicoBoardLed,
+    led_red: Led,
+    led_yellow: Led,
+    led_blue: Led,
+    led_green: Led,
+    oled: Oled,
+    seven_segment: SevenSegment74hc595,
 ):
     # COMMON VARIABLES
     message = 'でんたく'
@@ -46,7 +55,7 @@ def start(
         seven_segment.show(number2, dot)
 
         async def task():
-            operator = '+' if not dot else 'x'
+            operator = 'たしざん' if not dot else 'かけざん'
             oled.clear().write_middle(operator, scale).emit()
             await asyncio.sleep(1)
             oled.clear().write_middle(message, scale).emit()

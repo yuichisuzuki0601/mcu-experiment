@@ -40,8 +40,8 @@ __import__(f'expr{EXPR_NUMBER}').start(
     seven_segment   = seven_segment,
 )
 
+print('mcu-experiment start.')
 try:
-    print('mcu-experiment start.')
     asyncio.get_event_loop().run_forever()
 except KeyboardInterrupt:
     pass

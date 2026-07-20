@@ -8,8 +8,9 @@ class ServoMotor:
 
     def __init__(self, gpio_number: int, default_angle: float = 0, reverse: bool = False):
         self.gpio_number = gpio_number
+        self.pin = Pin(gpio_number, Pin.OUT)
         self.reverse = reverse
-        self._pwm = PWM(Pin(gpio_number, Pin.OUT))
+        self._pwm = PWM(self.pin)
         self._pwm.freq(ServoMotor.FREQ)
         self._pwm.duty_u16(0)
         self.set_angle(default_angle)
