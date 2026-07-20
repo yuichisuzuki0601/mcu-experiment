@@ -10,6 +10,9 @@ class Led:
         self.gpio_number = gpio_number
         self.pin = Pin(gpio_number, Pin.OUT)
 
+    def is_on(self):
+        return self.pin.value() == 1
+
     def on(self):
         print(f'Led \'{self.gpio_number}\' emitted.')
         self.pin.on()

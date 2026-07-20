@@ -8,7 +8,8 @@ class Buzzer:
 
     def __init__(self, gpio_number: int):
         self.gpio_number = gpio_number
-        self._pwm = PWM(Pin(gpio_number, Pin.OUT))
+        self.pin = Pin(gpio_number, Pin.OUT)
+        self._pwm = PWM(self.pin)
         self._pwm.duty_u16(0)
         self._is_sounding = False
 
@@ -16,7 +17,7 @@ class Buzzer:
         self._pwm.freq(freq)
         self._pwm.duty_u16(32768)
         self._is_sounding = True
-        print(f'Speaker \'{self.gpio_number}\' sounded {freq} Hz.')
+        print(f'Buzzer \'{self.gpio_number}\' sounded {freq} Hz.')
         return self
 
     def off(self):

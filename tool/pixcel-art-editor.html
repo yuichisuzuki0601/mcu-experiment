@@ -24,7 +24,7 @@
         flex-grow: 1;
         overflow: auto;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         justify-content: center;
         padding: 40px;
       }
@@ -47,7 +47,8 @@
     <div class="controls">
       Width: <input type="text" id="w" value="16" min="8" max="64" /> Height:
       <input type="text" id="h" value="16" min="8" max="64" />
-      <button onclick="init()">Resize (keep data)</button>
+      <button id="resize">Resize</button>
+      <button id="reset-size">Reset 16x16</button>
     </div>
     <div class="editor-container">
       <canvas id="canvas"></canvas>
@@ -61,35 +62,65 @@
     <script>
       const canvas = document.getElementById("canvas");
       const ctx = canvas.getContext("2d");
-      const output = document.getElementById("output");
-      let w = 16,
-        h = 16;
-      let grid = Array(h)
-        .fill(0)
-        .map(() => Array(w).fill(0));
       const cellSize = 20;
       const padding = 30;
+
+      const widthInput = document.getElementById("w");
+      const heightInput = document.getElementById("h");
+      const resizeButton = document.getElementById("resize");
+      const resetSizeButton = document.getElementById("reset-size");
+      const output = document.getElementById("output");
+
+      let w = 16;
+      let h = 16;
+      let grid = createGrid(w, h);
       let isDrawing = false;
       let drawMode = 1;
 
-      function init() {
-        const newW = parseInt(document.getElementById("w").value);
-        const newH = parseInt(document.getElementById("h").value);
+      function createGrid(width, height) {
+        return Array.from({ length: height }, () => Array(width).fill(0));
+      }
 
-        // 現在のグリッドデータを退避
-        const oldGrid = grid;
-
-        // 新しいグリッド作成
-        grid = Array(newH)
-          .fill(0)
-          .map(() => Array(newW).fill(0));
-
-        // データ引き継ぎ
-        for (let y = 0; y < Math.min(h, newH); y++) {
-          for (let x = 0; x < Math.min(w, newW); x++) {
-            grid[y][x] = oldGrid[y][x];
+      function copyGrid(source, width, height) {
+        const nextGrid = createGrid(width, height);
+        for (let y = 0; y < Math.min(source.length, height); y++) {
+          for (let x = 0; x < Math.min(source[y].length, width); x++) {
+            nextGrid[y][x] = source[y][x];
           }
         }
+        return nextGrid;
+      }
+
+      function getCellPosition(e) {
+        return {
+          x: Math.floor((e.offsetX - padding) / cellSize),
+          y: Math.floor((e.offsetY - padding) / cellSize),
+        };
+      }
+
+      function isInGrid(x, y) {
+        return x >= 0 && x < w && y >= 0 && y < h;
+      }
+
+      function changeInputValue(input, delta) {
+        const min = parseInt(input.min);
+        const max = parseInt(input.max);
+        const currentValue = parseInt(input.value) || min;
+        input.value = Math.max(min, Math.min(max, currentValue + delta));
+      }
+
+      function handleSizeInputKeydown(e) {
+        if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+        e.preventDefault();
+
+        changeInputValue(e.target, e.key === "ArrowUp" ? 1 : -1);
+      }
+
+      function init() {
+        const newW = parseInt(widthInput.value);
+        const newH = parseInt(heightInput.value);
+
+        grid = copyGrid(grid, newW, newH);
 
         w = newW;
         h = newH;
@@ -98,27 +129,44 @@
         draw();
       }
 
+      function resetSize() {
+        widthInput.value = 16;
+        heightInput.value = 16;
+        init();
+      }
+
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.font = "12px sans-serif";
         ctx.fillStyle = "#666";
 
-        // 列番号
+        drawColumnLabels();
+        drawRowLabels();
+        drawGrid();
+        generateCode();
+      }
+
+      function drawColumnLabels() {
+        ctx.fillStyle = "#666";
+        ctx.textAlign = "center";
         for (let i = 0; i < w; i++) {
-          ctx.textAlign = "center";
           ctx.fillText(i + 1, padding + i * cellSize + cellSize / 2, 20);
         }
-        // 行番号
+      }
+
+      function drawRowLabels() {
+        ctx.fillStyle = "#666";
+        ctx.textAlign = "right";
         for (let i = 0; i < h; i++) {
-          ctx.textAlign = "right";
           ctx.fillText(
             i + 1,
             padding - 5,
             padding + i * cellSize + cellSize / 2 + 4,
           );
         }
+      }
 
-        // ドット描画
+      function drawGrid() {
         ctx.strokeStyle = "#eee";
         for (let y = 0; y < h; y++) {
           for (let x = 0; x < w; x++) {
@@ -139,14 +187,12 @@
             }
           }
         }
-        generateCode();
       }
 
       canvas.onmousedown = (e) => {
         isDrawing = true;
-        const x = Math.floor((e.offsetX - padding) / cellSize);
-        const y = Math.floor((e.offsetY - padding) / cellSize);
-        if (x >= 0 && x < w && y >= 0 && y < h) {
+        const { x, y } = getCellPosition(e);
+        if (isInGrid(x, y)) {
           drawMode = grid[y][x] ? 0 : 1;
           grid[y][x] = drawMode;
           draw();
@@ -155,14 +201,17 @@
 
       canvas.onmousemove = (e) => {
         if (!isDrawing) return;
-        const x = Math.floor((e.offsetX - padding) / cellSize);
-        const y = Math.floor((e.offsetY - padding) / cellSize);
-        if (x >= 0 && x < w && y >= 0 && y < h) {
+        const { x, y } = getCellPosition(e);
+        if (isInGrid(x, y)) {
           grid[y][x] = drawMode;
           draw();
         }
       };
 
+      resizeButton.onclick = init;
+      resetSizeButton.onclick = resetSize;
+      widthInput.onkeydown = handleSizeInputKeydown;
+      heightInput.onkeydown = handleSizeInputKeydown;
       window.onmouseup = () => (isDrawing = false);
 
       function generateCode() {

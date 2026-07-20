@@ -17,10 +17,10 @@ class Oled:
     def __init__(self, scl_gpio_number: int, sda_gpio_number: int):
         self.scl_gpio_number = scl_gpio_number
         self.sda_gpio_number = sda_gpio_number
-        self._oled = SSD1306_I2C(Oled.WIDTH, Oled.HEIGHT, I2C(0, scl = Pin(scl_gpio_number), sda = Pin(sda_gpio_number)))
-        self._font = MisakiFont()
-        self._cursor_y = 0
-        self.marquee_x = Oled.WIDTH
+        self._oled           = SSD1306_I2C(Oled.WIDTH, Oled.HEIGHT, I2C(0, scl = Pin(scl_gpio_number), sda = Pin(sda_gpio_number)))
+        self._font           = MisakiFont()
+        self._cursor_y       = 0
+        self.marquee_x       = Oled.WIDTH
         self.clear()
 
     def write(self, text: str, x: int = 0, y: int = None, scale: int = 1):

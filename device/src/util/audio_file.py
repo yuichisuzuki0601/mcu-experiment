@@ -1,11 +1,14 @@
 import struct
 
 class WaveFile():
-    
+    DATA_OFFSET = 44
+
     def __init__(self, file_path: str):
         self.file_path = file_path
-        with open(file_path, 'rb') as file:
-            header               = file.read(44)
+        self._file = None
+        self._remaining_size = 0
+        with open(self.file_path, 'rb') as file:
+            header               = file.read(WaveFile.DATA_OFFSET)
             self.chunk_id        = header[0:4].decode('ascii')
             self.file_size       = struct.unpack('<I', header[4:8])[0]
             self.format          = header[8:12].decode('ascii')
@@ -36,3 +39,30 @@ class WaveFile():
         print(f'data_id         = {self.data_id}')
         print(f'data_size       = {self.data_size}')
         return self
+
+    def open(self):
+        self.close()
+        self._file = open(self.file_path, 'rb')
+        self._file.seek(WaveFile.DATA_OFFSET)
+        self._remaining_size = self.data_size
+        return self
+
+    def close(self):
+        if self._file:
+            self._file.close()
+            self._file = None
+        self._remaining_size = 0
+
+    def readinto(self, buffer: bytearray):
+        if not self._file or self._remaining_size <= 0:
+            return 0
+        read_size = self._file.readinto(buffer, min(len(buffer), self._remaining_size))
+        if read_size:
+            self._remaining_size -= read_size
+        return read_size
+
+    def __enter__(self):
+        return self.open()
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.close()

@@ -14,7 +14,7 @@ class TactSwitch:
         self._callback = None
         Runner(self._task).loop()
 
-    def on_click(self, callback):
+    def on_push(self, callback):
         self._callback = callback
         return self
 
@@ -23,7 +23,7 @@ class TactSwitch:
 
     async def _task(self):
         if self.pin.value() == TactSwitch.ON_VALUE:
-            print(f'TactSwitch \'{self.gpio_number}\' clicked.')
+            print(f'TactSwitch \'{self.gpio_number}\' pushed.')
             if self._callback:
                 self._callback()
         while self.pin.value() == TactSwitch.ON_VALUE:

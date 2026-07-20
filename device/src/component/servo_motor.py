@@ -1,5 +1,6 @@
 from machine import Pin, PWM
 
+# TODO FS90って名前をクラスにつける
 class ServoMotor:
     FREQ   = 50    #[Hz]
     MIN_US = 500   #[μs]

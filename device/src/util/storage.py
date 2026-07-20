@@ -23,7 +23,7 @@ class Storage:
 
     def set_config(self, key, val):
         self._save('config', key, val)
-    
+
     def get_state(self, key):
         return self._data.get(f'state.{key}')
 

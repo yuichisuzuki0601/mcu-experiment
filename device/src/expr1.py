@@ -139,7 +139,7 @@ def handle_click():
         angle = 0
         servo_motor.set_angle(angle)
 
-tact_switch.on_click(handle_click)
+tact_switch.on_push(handle_click)
 
 def handle_rotate(clockwise: bool):
     global count, angle
