@@ -23,10 +23,10 @@ seven_segment   = SevenSegment74hc595(*seven_segment_gpio_numbers)
 audio_amp       = AudioAmpMax98753a(*audio_amp_gpio_numbers)
 potention_meter = PotentionMeter(potention_meter_gpio_number)
 
-wav_file_coin = WaveFile('mario-coin.wav').print_detail()
-wav_file_pipe = WaveFile('mario-pipe.wav').print_detail()
+wav_file_coin = WaveFile('wav/mario-coin.wav').print_detail()
+wav_file_pipe = WaveFile('wav/mario-pipe.wav').print_detail()
 
-number  = 0
+number = 0
 
 def handle_click():
     global number
